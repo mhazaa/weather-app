@@ -1,10 +1,10 @@
 import React, { useState, useEffect, CSSProperties } from 'react';
+import Logo from './components/Logo';
 import CurrentCity from './components/CurrentCity';
 import CitySelector from './components/CitySelector';
 import TempratureData from './components/TempratureData';
 import Favorites from './components/Favorites';
 import { getLocationData, getWeeklyForecast, getHourlyForecast } from './api';
-import theme from './styles/theme';
 import { Temperature, WeeklyForecastData, HourlyForecastData } from './types';
 import './styles/styleSheet.scss';
 
@@ -15,23 +15,34 @@ const App: React.FC = () => {
 	const [weeklyForecast, setWeeklyForecast] = useState<WeeklyForecastData[]>([]);
 	const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>([]);
 	const [favoriteCities, setFavoriteCities] = useState<string[]>(['']);
+	const [loadingMessage, setLoadingMessage] = useState<string | null>('Loading...');
 
 	useEffect(() => {
 		(async () => {
+			setLoadingMessage('Loading location data...');
 			const { city, state, forecastURL, forecastHourlyURL } = await getLocationData();
 			setCity(city);
 			setState(state);
+			setLoadingMessage('Loading weekly forecast...');
 			const weeklyForecast = await getWeeklyForecast(forecastURL);
 			setWeeklyForecast(weeklyForecast);
+			setLoadingMessage('Loading hourly forecast...');
 			const { currentTemperature, hourlyForecast } = await getHourlyForecast(forecastHourlyURL);
 			setCurrentTemprature(currentTemperature);
 			setHourlyForecast(hourlyForecast);
+			setLoadingMessage(null);
 		})();
 	}, []);
 
 	const styles: {
 			[key: string]: CSSProperties;
 	} = {
+		loadingScreen: {
+			display: 'flex',
+			height: '100vh',
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
 		wrapper: {
 			width: '95%',
 			maxWidth: '900px',
@@ -42,17 +53,18 @@ const App: React.FC = () => {
 			display: 'flex',
 			justifyContent: 'center',
 		},
-		linebreak: {
-			background: theme.colors.white,
-			width: '100%',
-			height: '2px',
-		}
 	};
+
+	if (loadingMessage) return (
+		<div style={styles.loadingScreen}>
+			<h4>{loadingMessage}</h4>
+		</div>
+	);
 
 	return (
 		<div>
 			<div style={styles.wrapper}>
-				<h1>InfoTrack Weather App</h1>
+				<Logo />
 
 				<CurrentCity
 					city={city}
@@ -71,8 +83,6 @@ const App: React.FC = () => {
 					<CitySelector setCity={setCity} />
 					<Favorites city={city} favoriteCities={favoriteCities} />
 				</div>
-
-				<div style={styles.linebreak}/>
 			</div>
 		</div>
 	);
