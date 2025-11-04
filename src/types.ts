@@ -17,3 +17,9 @@ export interface HourlyForecastData {
 	hour: string;
 	temperature: Temperature;
 };
+
+export interface SVGOptions {
+	fill: string;
+	stroke: string;
+	strokeWidth: number;
+};
