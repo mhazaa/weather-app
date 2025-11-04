@@ -1,5 +1,5 @@
-import React, { CSSProperties } from 'react';
-import favoriteIcon from '../assets/favorite-icon.svg';
+import React, { useState, CSSProperties } from 'react';
+import FavoriteIcon from '../SVGComponents/FavoriteIcon';
 
 interface CurrentCityProps {
 	city: string;
@@ -14,6 +14,8 @@ const CurrentCity: React.FC<CurrentCityProps> = ({
 	favoriteCities,
 	setFavoritesCities,
 }) => {
+	const [favoriteIconHovered, setFavoriteIconHovered] = useState<boolean>(false);
+
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
@@ -21,33 +23,40 @@ const CurrentCity: React.FC<CurrentCityProps> = ({
 			display: 'flex',
 			justifyContent: 'center',
 			alignItems: 'center',
+			marginBottom: '10px',
 		},
 		cityTitle: {
-			marginRight: '10px',
 		},
 		favoriteIconButton: {
-		},
-		favoriteIcon: {
-			width: '50px',
+			width: '65px',
 			height: 'auto',
+			paddingLeft: '20px',
+			paddingTop: '10px',
 		},
 	};
 
 	const favoriteIconOnClick = () => {
 		if (city.length === 0) return;
 
-		if (!favoriteCities.includes(city)) {
-			setFavoritesCities([...favoriteCities, city]);
-		} else {
-			setFavoritesCities(favoriteCities.filter(_city => _city !== city));
-		}
+		return (!favoriteCities.includes(city))
+			? setFavoritesCities([...favoriteCities, city])
+			: setFavoritesCities(favoriteCities.filter(_city => _city !== city));
 	};
 
 	return (
 		<div style={styles.currentCityWrapper}>
 			<h2 style={styles.cityTitle}>{city}, {state}</h2>
-			<a style={styles.favoriteIconButton} onClick={favoriteIconOnClick}>
-				<img style={styles.favoriteIcon} src={favoriteIcon} alt='favorite-icon' />
+			<a
+				style={styles.favoriteIconButton}
+				onMouseEnter={() => setFavoriteIconHovered(true)}
+				onMouseLeave={() => setFavoriteIconHovered(false)}
+				onClick={favoriteIconOnClick}
+			>
+				<FavoriteIcon
+					fill={favoriteIconHovered ? 'white' : 'none'}
+					stroke='white'
+					strokeWidth={5}
+				/>
 			</a>
 		</div>
 	);
