@@ -3,87 +3,42 @@ import CurrentCity from './components/CurrentCity';
 import CitySelector from './components/CitySelector';
 import TempratureData from './components/TempratureData';
 import Favorites from './components/Favorites';
+import { getLocationData, getWeeklyForecast, getHourlyForecast } from './api';
 import theme from './styles/theme';
+import { Temperature, WeeklyForecastData, HourlyForecastData } from './types';
 import './styles/styleSheet.scss';
-
-interface Coords {
-	latitude: number;
-	longitude: number;
-};
-
-const getCoords = (): Promise<Coords> => {
-	return new Promise((resolve, reject) => {
-		if (!('geolocation' in navigator)) {
-			reject(new Error('Geolocation not supported'));
-			return;
-		}
-		
-		navigator.geolocation.getCurrentPosition(
-			(position: GeolocationPosition) => {
-				const { latitude, longitude } = position.coords;
-				resolve({ latitude, longitude });
-			},
-			(error: GeolocationPositionError) => reject(error)
-		);
-	});
-};
-
-export interface ForecastData {
-	name: string;
-	temperature: number;
-};
 
 const App: React.FC = () => {
 	const [city, setCity] = useState<string>(''); 
 	const [state, setState] = useState<string>('');
-	const [temprature, setTemprature] = useState<number>(0);
-	const [weeklyForecast, setWeeklyForecast] = useState<ForecastData[]>([]);
+	const [currentTemprature, setCurrentTemprature] = useState<Temperature>({degree: 0, unit: 'F'});
+	const [weeklyForecast, setWeeklyForecast] = useState<WeeklyForecastData[]>([]);
+	const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>([]);
 	const [favoriteCities, setFavoriteCities] = useState<string[]>(['']);
 
 	useEffect(() => {
 		(async () => {
-			const { latitude, longitude } = await getCoords();
-			const response = await fetch(`https://api.weather.gov/points/${latitude},${longitude}`);
-			const data = await response.json();
-
-			const city = data.properties.relativeLocation.properties.city;
-			const state = data.properties.relativeLocation.properties.state;
+			const { city, state, forecastURL, forecastHourlyURL } = await getLocationData();
 			setCity(city);
 			setState(state);
-
-			const forecastURL = data.properties.forecast;
-			const forecastResponse = await fetch(forecastURL);
-			const forecastData = await forecastResponse.json();
-			const forecastDataPeriods = forecastData.properties.periods;
-			const weeklyForecast = forecastDataPeriods.map((period: any): ForecastData => {
-				return {
-					name: period.name,
-					temperature: period.temperature,
-				};
-			});
+			const weeklyForecast = await getWeeklyForecast(forecastURL);
 			setWeeklyForecast(weeklyForecast);
-
-			const forecastHourlyURL = data.properties.forecastHourly;
-			const forecastHourlyResponse = await fetch(forecastHourlyURL);
-			const forecastHourlyData = await forecastHourlyResponse.json();
-			const periods = forecastHourlyData.properties.periods;
-			const temperature = periods[0].temperature;
-			setTemprature(temperature);
+			const { currentTemperature, hourlyForecast } = await getHourlyForecast(forecastHourlyURL);
+			setCurrentTemprature(currentTemperature);
+			setHourlyForecast(hourlyForecast);
 		})();
 	}, []);
 
 	const styles: {
 			[key: string]: CSSProperties;
 	} = {
-		container: {
-		},
 		wrapper: {
 			width: '95%',
 			maxWidth: '900px',
 			margin: 'auto',
 			textAlign: 'center',
 		},
-		buttonsWrapper: {
+		sectionsWrapper: {
 			display: 'flex',
 			justifyContent: 'center',
 		},
@@ -95,7 +50,7 @@ const App: React.FC = () => {
 	};
 
 	return (
-		<div style={styles.container}>
+		<div>
 			<div style={styles.wrapper}>
 				<h1>InfoTrack Weather App</h1>
 
@@ -106,11 +61,14 @@ const App: React.FC = () => {
 					setFavoritesCities={setFavoriteCities}
 				/>
 
-				<div style={styles.buttonsWrapper}>
+				<TempratureData
+					currentTemprature={currentTemprature}
+					weeklyForecast={weeklyForecast}
+					hourlyForecast={hourlyForecast}
+				/>
+
+				<div style={styles.sectionsWrapper}>
 					<CitySelector setCity={setCity} />
-
-					<TempratureData temprature={temprature} weeklyForecast={weeklyForecast} />
-
 					<Favorites city={city} favoriteCities={favoriteCities} />
 				</div>
 
