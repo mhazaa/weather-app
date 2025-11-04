@@ -1,8 +1,50 @@
+@import url('https://use.typekit.net/zin5chk.css');
+$fabulosa-font: 'fabulosa', sans-serif; // font weights: 400
+$futura-font: 'futura-100', sans-serif; // font weights: 300, 400, 500, 600, 700
+$futura-book-font: 'futura-100-book', sans-serif; // font weights: 400
+$blue: #32afb2;
+
 * {
 	margin: 0;
 	padding: 0;
 }
 
 body {
-	
+	background: $blue;
+	width: 100vw;
+	min-height: 100vh;
+}
+
+a {
+	cursor: pointer;
+}
+
+h1, h2, h3, h4 {
+	color: white;
+}
+
+h2, h3, h4 {
+	font-family: $futura-font;
+}
+
+h1 {
+	font-family: $fabulosa-font;
+	font-size: 1.2rem;
+}
+
+h2 {
+	font-size: 4rem;
+	font-weight: 300;
+}
+
+h3 {
+	font-size: 1.3rem;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+h4, input {
+	font-size: 1rem;
+	font-weight: 600;
+	text-transform: uppercase;
 }
