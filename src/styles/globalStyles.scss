@@ -3,10 +3,22 @@ $fabulosa-font: 'fabulosa', sans-serif; // font weights: 400
 $futura-font: 'futura-100', sans-serif; // font weights: 300, 400, 500, 600, 700
 $futura-book-font: 'futura-100-book', sans-serif; // font weights: 400
 $blue: #32afb2;
+$dark-blue: #0d3333;
+$breakpointMobile: 568px;
+$breakpointTablet: 768px;
+$breakpointDesktop: 1024px;
 
 * {
 	margin: 0;
 	padding: 0;
+}
+
+html {
+	font-size: 16px;
+
+	@media (max-width: $breakpointMobile) {
+		font-size: 12px;
+	}
 }
 
 body {
@@ -33,14 +45,18 @@ h1 {
 }
 
 h2 {
-	font-size: 4rem;
+	font-size: 4.6rem;
 	font-weight: 300;
 }
 
 h3 {
-	font-size: 1.3rem;
+	font-size: 1.2rem;
 	font-weight: 600;
 	text-transform: uppercase;
+}
+
+h4 {
+	white-space: nowrap;
 }
 
 h4, input {
