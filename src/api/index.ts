@@ -5,7 +5,7 @@ const getCoords = (): Promise<Coords> => {
 		if (!('geolocation' in navigator)) {
 			reject(new Error('Geolocation not supported'));
 			return;
-		}
+		};
 		
 		navigator.geolocation.getCurrentPosition(
 			(position: GeolocationPosition) => {
