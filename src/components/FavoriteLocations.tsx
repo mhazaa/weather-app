@@ -2,14 +2,14 @@ import React, { CSSProperties } from 'react';
 import theme from '../styles/theme';
 import favoritesCloud from '../assets/favorites-cloud.svg';
 
-interface FavoritesProps {
+interface FavoriteLocationsProps {
 	city: string;
-	favoriteCities: string[];
+	favoriteLocations: string[];
 }
 
-const Favorites: React.FC<FavoritesProps> = ({
+const FavoriteLocations: React.FC<FavoriteLocationsProps> = ({
 	city,
-	favoriteCities,
+	favoriteLocations,
 }) => {
 	const styles: {
 		[key: string]: CSSProperties;
@@ -22,6 +22,12 @@ const Favorites: React.FC<FavoritesProps> = ({
 			bottom: '0',
 			color: theme.colors.blue,
 		},
+		currentLocation: {
+			height: '40px',
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
 	};
 
 	const favoriteCityOnClick = (favorite?: string) => {
@@ -33,17 +39,17 @@ const Favorites: React.FC<FavoritesProps> = ({
 		<div>
 			<a className='cloud-wrapper'>
 				<img style={styles.favoritesCloud} src={favoritesCloud} alt='favorites-cloud' />
-				<h3 style={styles.buttonText}>Favorites</h3>
+				<h3 style={styles.buttonText}>Favorite Locations</h3>
 			</a>
 
 			<div>
-				<a>
+				<a style={styles.currentLocation}>
 					<h4>{city} (Current Location)</h4>
 				</a>
 				<div>
-					{favoriteCities.map((city: string, i: number) => (
-						<a key={i} onClick={() => favoriteCityOnClick(favoriteCities[i])}>
-							<h4>{city}</h4>
+					{favoriteLocations.map((location: string, i: number) => (
+						<a key={i} onClick={() => favoriteCityOnClick(favoriteLocations[i])}>
+							<h4>{location}</h4>
 						</a>
 					))}
 				</div>
@@ -52,4 +58,4 @@ const Favorites: React.FC<FavoritesProps> = ({
 	);
 };
 
-export default Favorites;
+export default FavoriteLocations;

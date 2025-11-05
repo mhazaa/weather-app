@@ -1,9 +1,9 @@
 import React, { useState, useEffect, CSSProperties } from 'react';
 import Logo from './components/Logo';
-import CurrentCity from './components/CurrentCity';
-import CitySelector from './components/CitySelector';
-import TempratureData from './components/TempratureData';
-import Favorites from './components/Favorites';
+import CurrentLocation from './components/CurrentLocation';
+import LocationSelector from './components/LocationSelector';
+import ForecastOverview from './components/ForecastOverview';
+import FavoriteLocations from './components/FavoriteLocations';
 import { getLocationData, getWeeklyForecast, getHourlyForecast } from './api';
 import { Temperature, WeeklyForecastData, HourlyForecastData } from './types';
 import './styles/styleSheet.scss';
@@ -14,7 +14,7 @@ const App: React.FC = () => {
 	const [currentTemprature, setCurrentTemprature] = useState<Temperature>({degree: 0, unit: 'F'});
 	const [weeklyForecast, setWeeklyForecast] = useState<WeeklyForecastData[]>([]);
 	const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>([]);
-	const [favoriteCities, setFavoriteCities] = useState<string[]>(['']);
+	const [favoriteLocations, setFavoriteLocations] = useState<string[]>(['']);
 	const [loadingMessage, setLoadingMessage] = useState<string | null>('Loading...');
 
 	useEffect(() => {
@@ -66,22 +66,22 @@ const App: React.FC = () => {
 			<div style={styles.wrapper}>
 				<Logo />
 
-				<CurrentCity
+				<CurrentLocation
 					city={city}
 					state={state}
-					favoriteCities={favoriteCities}
-					setFavoritesCities={setFavoriteCities}
+					favoriteLocations={favoriteLocations}
+					setFavoriteLocations={setFavoriteLocations}
 				/>
 
-				<TempratureData
+				<ForecastOverview
 					currentTemprature={currentTemprature}
 					weeklyForecast={weeklyForecast}
 					hourlyForecast={hourlyForecast}
 				/>
 
 				<div style={styles.sectionsWrapper}>
-					<CitySelector setCity={setCity} />
-					<Favorites city={city} favoriteCities={favoriteCities} />
+					<LocationSelector setCity={setCity} setState={setState} />
+					<FavoriteLocations city={city} favoriteLocations={favoriteLocations} />
 				</div>
 			</div>
 		</div>

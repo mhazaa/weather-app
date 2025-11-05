@@ -8,10 +8,10 @@ const Logo: React.FC = () => {
 		logo: {
 			background: theme.colors.darkBlue,
 			display: 'inline-block',
-			padding: '5px 60px',
+			padding: '7px 60px 5px 60px',
 			marginTop: '10px',
 			marginBottom: '40px',
-			borderRadius: '40px',
+			borderRadius: '5px',
 		},
 	};
 

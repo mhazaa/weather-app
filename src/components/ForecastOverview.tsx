@@ -4,13 +4,13 @@ import theme from '../styles/theme';
 import { Temperature, WeeklyForecastData, HourlyForecastData } from '../types';
 import tempratureCloud from '../assets/temprature-cloud.svg';
 
-interface TempratureDataProps {
+interface ForecastOverviewProps {
 	currentTemprature: Temperature;
 	weeklyForecast: WeeklyForecastData[];
 	hourlyForecast: HourlyForecastData[];
 };
 
-const TempratureData: React.FC<TempratureDataProps> = ({
+const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 	currentTemprature,
 	weeklyForecast,
 	hourlyForecast,
@@ -111,4 +111,4 @@ const TempratureData: React.FC<TempratureDataProps> = ({
 	);
 };
 
-export default TempratureData;
+export default ForecastOverview;

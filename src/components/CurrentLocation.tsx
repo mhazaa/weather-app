@@ -1,25 +1,25 @@
 import React, { useState, CSSProperties } from 'react';
 import FavoriteIcon from '../SVGComponents/FavoriteIcon';
 
-interface CurrentCityProps {
+interface CurrentLocationProps {
 	city: string;
 	state: string;
-	favoriteCities: string[];
-	setFavoritesCities: (favoriteCities: string[]) => void;
+	favoriteLocations: string[];
+	setFavoriteLocations: (favoriteLocations: string[]) => void;
 };
 
-const CurrentCity: React.FC<CurrentCityProps> = ({
+const CurrentLocation: React.FC<CurrentLocationProps> = ({
 	city,
 	state,
-	favoriteCities,
-	setFavoritesCities,
+	favoriteLocations,
+	setFavoriteLocations,
 }) => {
 	const [favoriteIconHovered, setFavoriteIconHovered] = useState<boolean>(false);
 
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
-		currentCityWrapper: {
+		currentLocationWrapper: {
 			display: 'flex',
 			justifyContent: 'center',
 			alignItems: 'center',
@@ -38,13 +38,13 @@ const CurrentCity: React.FC<CurrentCityProps> = ({
 	const favoriteIconOnClick = () => {
 		if (city.length === 0) return;
 
-		return (!favoriteCities.includes(city))
-			? setFavoritesCities([...favoriteCities, city])
-			: setFavoritesCities(favoriteCities.filter(_city => _city !== city));
+		return (!favoriteLocations.includes(city))
+			? setFavoriteLocations([...favoriteLocations, city])
+			: setFavoriteLocations(favoriteLocations.filter(_location => _location !== location));
 	};
 
 	return (
-		<div style={styles.currentCityWrapper}>
+		<div style={styles.currentLocationWrapper}>
 			<h2 style={styles.cityTitle}>{city}, {state}</h2>
 			<a
 				style={styles.favoriteIconButton}
@@ -62,4 +62,4 @@ const CurrentCity: React.FC<CurrentCityProps> = ({
 	);
 };
 
-export default CurrentCity;
+export default CurrentLocation;

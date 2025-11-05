@@ -1,18 +1,20 @@
 import React, { CSSProperties } from 'react';
 import theme from '../styles/theme';
-import cityCloud from '../assets/city-cloud.svg';
+import locationCloud from '../assets/location-cloud.svg';
 
-interface CitySelectorProps {
+interface LocationSelectorProps {
 	setCity: (city: string) => void;
+	setState: (state: string) => void;
 };
 
-const CitySelector: React.FC<CitySelectorProps> = ({
+const LocationSelector: React.FC<LocationSelectorProps> = ({
 	setCity,
+	setState,
 }) => {
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
-		cityCloud: {
+		locationCloud: {
 			width: '250px',
 		},
 		buttonText: {
@@ -33,8 +35,8 @@ const CitySelector: React.FC<CitySelectorProps> = ({
 	return (
 		<div>
 			<a className='cloud-wrapper'>
-				<img style={styles.cityCloud} src={cityCloud} alt='city-cloud' />
-				<h3 style={styles.buttonText}>Change City</h3>
+				<img style={styles.locationCloud} src={locationCloud} alt='location-cloud' />
+				<h3 style={styles.buttonText}>Change Location</h3>
 			</a>
 
 			<div>
@@ -44,4 +46,4 @@ const CitySelector: React.FC<CitySelectorProps> = ({
 	);
 };
 
-export default CitySelector;
+export default LocationSelector;
