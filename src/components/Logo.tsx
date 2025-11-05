@@ -10,7 +10,7 @@ const Logo: React.FC = () => {
 			display: 'inline-block',
 			padding: '7px 60px 5px 60px',
 			marginTop: '10px',
-			marginBottom: '40px',
+			marginBottom: '60px',
 			borderRadius: '5px',
 		},
 	};
