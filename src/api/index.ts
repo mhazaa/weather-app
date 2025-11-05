@@ -1,6 +1,6 @@
-import { Coords, WeeklyForecastData, HourlyForecastData } from '../types';
+import { Coords, WeeklyForecastData, HourlyForecastData, Place } from '../types';
 
-const getCoords = (): Promise<Coords> => {
+export const getCoords = (): Promise<Coords> => {
 	return new Promise((resolve, reject) => {
 		if (!('geolocation' in navigator)) {
 			reject(new Error('Geolocation not supported'));
@@ -19,14 +19,16 @@ const getCoords = (): Promise<Coords> => {
 	});
 };
 
-export const getLocationData = async () => {
-	const { latitude, longitude } = await getCoords();
+export const getLocationData = async (latitude: number, longitude: number) => {
 	const response = await fetch(`https://api.weather.gov/points/${latitude},${longitude}`);
 	const data = await response.json();
 	const city = data.properties.relativeLocation.properties.city;
 	const state = data.properties.relativeLocation.properties.state;
 	const forecastURL = data.properties.forecast;
 	const forecastHourlyURL = data.properties.forecastHourly;
+
+	if (!city || !state || !forecastURL || !forecastHourlyURL)
+		throw new Error('Incomplete location data from Weather API');
 
 	return {
 		city, state, forecastURL, forecastHourlyURL,
@@ -35,8 +37,16 @@ export const getLocationData = async () => {
 
 export const getWeeklyForecast = async (forecastURL: string) => {
 	const forecastResponse = await fetch(forecastURL);
+
+	if (!forecastResponse.ok)
+		throw new Error(`Forecast API error: ${forecastResponse.status} ${forecastResponse.statusText}`);
+
 	const forecastData = await forecastResponse.json();
 	const forecastDataPeriods = forecastData.properties.periods;
+
+	if (!Array.isArray(forecastDataPeriods))
+		throw new Error('Invalid forecast data format from Weather API');
+
 	const weeklyForecast = forecastDataPeriods.map((period: any): WeeklyForecastData => {
 		return {
 			day: period.name,
@@ -51,8 +61,15 @@ export const getWeeklyForecast = async (forecastURL: string) => {
 
 export const getHourlyForecast = async (forecastHourlyURL: string) => {
 	const forecastHourlyResponse = await fetch(forecastHourlyURL);
+
+	if (!forecastHourlyResponse.ok)
+		throw new Error(`Hourly forecast request failed: ${forecastHourlyResponse.status} ${forecastHourlyResponse.statusText}`);
+
 	const forecastHourlyData = await forecastHourlyResponse.json();
 	const forecastHourlyPeriods = forecastHourlyData.properties.periods;
+
+	if (!Array.isArray(forecastHourlyPeriods) || forecastHourlyPeriods.length === 0)
+		throw new Error('Invalid or missing hourly forecast data.');
 
 	const _hourlyForecast: any[] = forecastHourlyPeriods.map((period: any) => {
 		const hour = new Date(period.startTime).toLocaleTimeString([], {
@@ -67,7 +84,7 @@ export const getHourlyForecast = async (forecastHourlyURL: string) => {
 				unit: period.temperatureUnit,
 			},
 			startTime: period.startTime,
-		}
+		};
 	});
 
 	const today = new Date().toISOString().split('T')[0];
@@ -83,4 +100,21 @@ export const getHourlyForecast = async (forecastHourlyURL: string) => {
 	return {
 		currentTemperature, hourlyForecast,
 	};
+};
+
+export const getLocationList = async (location: string): Promise<Place[]> => {
+	const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=us&q=${encodeURIComponent(location)}`);
+	const data = await res.json();
+
+	if (data.length === 0) throw new Error('No results found');
+
+	return data.map((place: any) => ({
+		displayName: place.display_name,
+		county: place.address.county || null,
+		town: place.address.town || null,
+		city: place.address.city || null,
+		state: place.address.state,
+		latitude: parseFloat(place.lat),
+		longitude: parseFloat(place.lon),
+	}));
 };

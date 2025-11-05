@@ -1,16 +1,20 @@
-import React, { CSSProperties } from 'react';
+import React, { useState, CSSProperties } from 'react';
+import { getLocationList } from '../api';
 import theme from '../styles/theme';
+import { Coords, Place } from '../types';
 import locationCloud from '../assets/location-cloud.svg';
 
+let timeout: any = null;
+
 interface LocationSelectorProps {
-	setCity: (city: string) => void;
-	setState: (state: string) => void;
+	setCoords: (coords: Coords) => void;
 };
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({
-	setCity,
-	setState,
+	setCoords,
 }) => {
+	const [locationsDropdown, setLocationsDropdown] = useState<Place[]>([]);
+
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
@@ -28,8 +32,32 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 			padding: '0 5px',
 			color: theme.colors.blue,
 			boxSizing: 'border-box',
-			textTransform: 'unset',
+			textAlign: 'center',
 		},
+		dropdown: {
+			width: '100%',
+			overflowX: 'hidden',
+		},
+	};
+
+	const onInputChange = (input: string) => {
+		if (timeout) clearTimeout(timeout);
+
+		timeout = setTimeout(() => {
+			(async () => {
+				try {
+					const locationList = await getLocationList(input);
+					setLocationsDropdown(locationList);
+					console.log(locationList);
+				} catch (e) {
+					console.error(e);
+				};
+			})();
+		}, 1000);
+	};
+
+	const dropdownItemOnClick = (latitude: number, longitude: number) => {
+		setCoords({ latitude, longitude });
 	};
 
 	return (
@@ -40,7 +68,20 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 			</a>
 
 			<div>
-				<input style={styles.cityInput} />
+				<input style={styles.cityInput} onChange={(e) => onInputChange(e.target.value)} />
+			</div>
+
+			<div style={styles.dropdown}>
+				{locationsDropdown.map((place: Place, i: number) => (
+					<a
+						key={i}
+						onClick={
+							() => dropdownItemOnClick(place.latitude, place.longitude)
+						}
+					>
+						<h4>{place.city || place.town || place.county}, {place.state}</h4>
+					</a>
+				))}
 			</div>
 		</div>
 	);

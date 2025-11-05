@@ -23,3 +23,13 @@ export interface SVGOptions {
 	stroke: string;
 	strokeWidth: number;
 };
+
+export interface Place {
+	displayName: string;
+	county?: string;
+	town?: string;
+	city?: string;
+	state: string
+	latitude: number;
+	longitude: number;
+};

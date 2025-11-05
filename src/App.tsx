@@ -4,11 +4,12 @@ import CurrentLocation from './components/CurrentLocation';
 import LocationSelector from './components/LocationSelector';
 import ForecastOverview from './components/ForecastOverview';
 import FavoriteLocations from './components/FavoriteLocations';
-import { getLocationData, getWeeklyForecast, getHourlyForecast } from './api';
-import { Temperature, WeeklyForecastData, HourlyForecastData } from './types';
+import { getCoords, getLocationData, getWeeklyForecast, getHourlyForecast } from './api';
+import { Coords, Temperature, WeeklyForecastData, HourlyForecastData } from './types';
 import './styles/styleSheet.scss';
 
 const App: React.FC = () => {
+	const [coords, setCoords] = useState<Coords | null>(null);
 	const [city, setCity] = useState<string>(''); 
 	const [state, setState] = useState<string>('');
 	const [currentTemprature, setCurrentTemprature] = useState<Temperature>({degree: 0, unit: 'F'});
@@ -19,8 +20,20 @@ const App: React.FC = () => {
 
 	useEffect(() => {
 		(async () => {
+			try {
+				setLoadingMessage('Loading current coordinates...');
+				const { latitude, longitude } = await getCoords();
+				setCoords({latitude, longitude});
+			} catch (e) {
+				console.error(e);
+			};
+		})();
+	}, []);
+
+	useEffect(() => {
+		(async () => {
 			setLoadingMessage('Loading location data...');
-			const { city, state, forecastURL, forecastHourlyURL } = await getLocationData();
+			const { city, state, forecastURL, forecastHourlyURL } = await getLocationData(coords.latitude, coords.longitude);
 			setCity(city);
 			setState(state);
 			setLoadingMessage('Loading weekly forecast...');
@@ -32,7 +45,7 @@ const App: React.FC = () => {
 			setHourlyForecast(hourlyForecast);
 			setLoadingMessage(null);
 		})();
-	}, []);
+	}, [coords]);
 
 	const styles: {
 			[key: string]: CSSProperties;
@@ -55,7 +68,7 @@ const App: React.FC = () => {
 		},
 	};
 
-	if (loadingMessage) return (
+	if (loadingMessage || !coords) return (
 		<div style={styles.loadingScreen}>
 			<h4>{loadingMessage}</h4>
 		</div>
@@ -80,7 +93,7 @@ const App: React.FC = () => {
 				/>
 
 				<div style={styles.sectionsWrapper}>
-					<LocationSelector setCity={setCity} setState={setState} />
+					<LocationSelector setCoords={setCoords} />
 					<FavoriteLocations city={city} favoriteLocations={favoriteLocations} />
 				</div>
 			</div>
