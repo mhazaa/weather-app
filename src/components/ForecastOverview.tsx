@@ -22,11 +22,11 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 			marginBottom: '40px',
 		},
 		tempratureCloud: {
-			width: '300px',
+			width: '315px',
 		},
 		tempratureTitle: {
 			position: 'absolute',
-			fontWeight: '500',
+			bottom: 0,
 			color: theme.colors.blue,
 		},
 		forecastsWrapper: {
@@ -86,7 +86,7 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 				<div style={styles.hourlyForecastWrapper}>
 					<div style={styles.forecastScroll}>
 						{hourlyForecast.map((forecast: HourlyForecastData, i: number) => (
-							<div style={styles.hour} key={i}>
+							<div key={i} style={styles.hour}>
 								<h4 style={styles.hourText}>{forecast.hour}:&nbsp;</h4>
 								<h4>{forecast.temperature.degree} {forecast.temperature.unit}°</h4>
 							</div>
@@ -98,7 +98,7 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 				<div style={styles.weeklyForecastWrapper}>
 					<div style={styles.forecastScroll}>
 						{weeklyForecast.map((forecast: WeeklyForecastData, i: number) => (
-							<div style={styles.day} key={i}>
+							<div key={i} style={styles.day}>
 								<h4 style={styles.dayText}>{forecast.day}:&nbsp;</h4>
 								<h4>{forecast.temperature.degree} {forecast.temperature.unit}°</h4>
 							</div>
