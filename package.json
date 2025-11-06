@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "lint": "eslint",
-    "build": "webpack",
+    "build": "eslint && webpack",
     "dev": "webpack --watch"
   },
   "keywords": [],

@@ -4,7 +4,7 @@ import Separator from './Separator';
 import { getLocationList } from '../api';
 import locationNameParser from '../functions/locationNameParser';
 import theme from '../styles/theme';
-import { Coords, Location } from '../types';
+import { Location } from '../types';
 import locationCloud from '../assets/location-cloud.svg';
 
 let timeout: any = null;
