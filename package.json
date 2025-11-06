@@ -4,20 +4,24 @@
   "description": "",
   "scripts": {
     "lint": "eslint",
-    "build": "eslint && webpack",
-    "dev": "webpack --watch"
+    "dev": "concurrently 'webpack --watch' 'ts-node server.ts'",
+	"build": "eslint && webpack",
+    "start": "eslint && webpack && ts-node server.ts"
   },
   "keywords": [],
   "author": "Magdi Hazaa",
   "license": "ISC",
   "dependencies": {
+    "express": "^5.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@types/express": "^5.0.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "concurrently": "^9.2.1",
     "css-loader": "^7.1.2",
     "eslint": "^9.36.0",
     "eslint-plugin-react": "^7.37.5",
@@ -27,6 +31,7 @@
     "sass": "^1.93.2",
     "sass-loader": "^16.0.5",
     "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
     "webpack": "^5.101.3",
