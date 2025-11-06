@@ -29,6 +29,10 @@ html, body {
 	}
 }
 
+img {
+	user-select: none;
+}
+
 a {
 	cursor: pointer;
 }
@@ -50,6 +54,7 @@ h2 {
 	font-size: 4.3rem;
 	line-height: 4.3rem;
 	font-weight: 300;
+	text-transform: uppercase;
 }
 
 .temprature-title-font {
