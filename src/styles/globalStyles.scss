@@ -13,18 +13,20 @@ $breakpointDesktop: 1024px;
 	padding: 0;
 }
 
-html {
+html, body {
+	background: $blue;
+	width: 100vw;
+	min-height: 100vh;
+	overflow-x: hidden;
 	font-size: 16px;
+
+	@media (max-width: $breakpointTablet) {
+		font-size: 14px;
+	}
 
 	@media (max-width: $breakpointMobile) {
 		font-size: 12px;
 	}
-}
-
-body {
-	background: $blue;
-	width: 100vw;
-	min-height: 100vh;
 }
 
 a {
@@ -35,7 +37,7 @@ h1, h2, h3, h4 {
 	color: white;
 }
 
-h2, h3, h4 {
+h2, h3, h4, input {
 	font-family: $futura-font;
 }
 
@@ -48,6 +50,11 @@ h2 {
 	font-size: 4.3rem;
 	line-height: 4.3rem;
 	font-weight: 300;
+}
+
+.temprature-title-font {
+	font-size: 3.6rem;
+	font-weight: 500;
 }
 
 h3 {
@@ -64,4 +71,9 @@ h4, input {
 	font-size: 1rem;
 	font-weight: 600;
 	text-transform: uppercase;
+}
+
+input {
+	outline: none;
+	border: 1px solid $blue;
 }
