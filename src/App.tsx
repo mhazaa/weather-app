@@ -14,6 +14,7 @@ import './styles/styleSheet.scss';
 const App: React.FC = () => {
 	const [coords, setCoords] = useState<Coords | null>(null);
 	const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+	const [usersLocation, setUsersLocation] = useState<Location | null>(null);
 	const [currentTemprature, setCurrentTemprature] = useState<Temperature>({degree: 0, unit: 'F'});
 	const [weeklyForecast, setWeeklyForecast] = useState<WeeklyForecastData[]>([]);
 	const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>([]);
@@ -38,24 +39,47 @@ const App: React.FC = () => {
 		if (!coords) return;
 
 		(async () => {
-			setLoadingMessage('Loading current location data...');
-			const { city, state, forecastURL, forecastHourlyURL } = await getLocationData(coords.latitude, coords.longitude);
-			setCurrentLocation({
-				city,
-				state,
-				latitude: coords.latitude,
-				longitude: coords.longitude,
-			});
-			setLoadingMessage('Loading weekly forecast...');
-			const weeklyForecast = await getWeeklyForecast(forecastURL);
-			setWeeklyForecast(weeklyForecast);
-			setLoadingMessage('Loading hourly forecast...');
-			const { currentTemperature, hourlyForecast } = await getHourlyForecast(forecastHourlyURL);
-			setCurrentTemprature(currentTemperature);
-			setHourlyForecast(hourlyForecast);
-			setLoadingMessage(null);
+			try {
+				setLoadingMessage('Loading current location data...');
+				const { city, state } = await getLocationData(coords.latitude, coords.longitude);
+				setCurrentLocation({
+					city,
+					state,
+					latitude: coords.latitude,
+					longitude: coords.longitude,
+				});
+				setUsersLocation({
+					city,
+					state,
+					latitude: coords.latitude,
+					longitude: coords.longitude,
+				});
+			} catch (e) {
+				console.error(e);
+			};
 		})();
 	}, [coords]);
+
+	useEffect(() => {
+		if (!currentLocation) return;
+		
+		(async () => {
+			try {
+				setLoadingMessage('Loading location data...');
+				const { forecastURL, forecastHourlyURL } = await getLocationData(currentLocation.latitude, currentLocation.longitude);
+				setLoadingMessage('Loading weekly forecast...');
+				const weeklyForecast = await getWeeklyForecast(forecastURL);
+				setWeeklyForecast(weeklyForecast);
+				setLoadingMessage('Loading hourly forecast...');
+				const { currentTemperature, hourlyForecast } = await getHourlyForecast(forecastHourlyURL);
+				setCurrentTemprature(currentTemperature);
+				setHourlyForecast(hourlyForecast);
+				setLoadingMessage(null);
+			} catch (e) {
+				console.error(e);
+			};
+		})();
+	}, [currentLocation]);
 
 	const styles: {
 			[key: string]: CSSProperties;
@@ -80,6 +104,17 @@ const App: React.FC = () => {
 		},
 	};
 
+	const addLocationToFavorites = (location: Location) => {
+		const alreadyFavorited = favoriteLocations.includes(location);
+		if (alreadyFavorited) {
+			setFavoriteLocations(prevItems => prevItems.filter(item =>
+				item.latitude !== location.latitude || item.longitude !== location.longitude
+			));
+		} else {
+			setFavoriteLocations(prevItems => [...prevItems, location]);
+		};
+	};
+
 	return (
 		<div>
 			{loadingMessage &&
@@ -90,8 +125,7 @@ const App: React.FC = () => {
 
 				{currentLocation && <CurrentLocation
 					currentLocation={currentLocation}
-					isFavorited={favoriteLocations.includes(currentLocation)}
-					setFavoriteLocations={setFavoriteLocations}
+					addLocationToFavorites={addLocationToFavorites}
 				/>}
 
 				<ForecastOverview
@@ -100,11 +134,12 @@ const App: React.FC = () => {
 					hourlyForecast={hourlyForecast}
 				/>
 
-				{currentLocation &&
+				{usersLocation &&
 					<div style={styles.sectionsWrapper}>
-						<LocationSelector setCoords={setCoords} />
+						<LocationSelector setCurrentLocation={setCurrentLocation} />
 						<FavoriteLocations
-							currentLocation={currentLocation}
+							usersLocation={usersLocation}
+							setCurrentLocation={setCurrentLocation}
 							favoriteLocations={favoriteLocations}
 						/>
 						{!isMobile &&

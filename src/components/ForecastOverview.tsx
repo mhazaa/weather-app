@@ -100,7 +100,7 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 
 			<div style={styles.forecastsWrapper}>
 				<div style={styles.hourlyForecastWrapper}>
-					<div style={styles.forecastScroll}>
+					<div style={styles.forecastScroll} tabIndex={-1}>
 						{hourlyForecast.map((forecast: HourlyForecastData, i: number) => (
 							<div key={i} style={styles.hour}>
 								<h4 style={styles.hourText}>{forecast.hour}:&nbsp;</h4>
@@ -111,8 +111,8 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 					<div style={styles.forecastBottomGradient}></div>
 				</div>
 
-				<div style={styles.weeklyForecastWrapper}>
-					<div style={styles.forecastScroll}>
+				<div style={styles.weeklyForecastWrapper} tabIndex={-1}>
+					<div style={styles.forecastScroll} tabIndex={-1}>
 						{weeklyForecast.map((forecast: WeeklyForecastData, i: number) => (
 							<div key={i} style={styles.day}>
 								<h4 style={styles.dayText}>{forecast.day}:&nbsp;</h4>
