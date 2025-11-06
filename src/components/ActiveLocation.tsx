@@ -4,13 +4,13 @@ import locationNameParser from '../functions/locationNameParser';
 import { Location } from '../types';
 import FavoriteIcon from '../SVGComponents/FavoriteIcon';
 
-interface CurrentLocationProps {
-	currentLocation: Location;
+interface ActiveLocationProps {
+	activeLocation: Location;
 	addLocationToFavorites: (location: Location) => void;
 };
 
-const CurrentLocation: React.FC<CurrentLocationProps> = ({
-	currentLocation,
+const ActiveLocation: React.FC<ActiveLocationProps> = ({
+	activeLocation,
 	addLocationToFavorites,
 }) => {
 	const [isFavorited, setIsFavorited] = useState<boolean>(false);
@@ -20,7 +20,7 @@ const CurrentLocation: React.FC<CurrentLocationProps> = ({
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
-		currentLocationWrapper: {
+		activeLocationWrapper: {
 			display: 'flex',
 			flexDirection: isMobile ? 'column-reverse' : 'row',
 			justifyContent: 'center',
@@ -37,13 +37,13 @@ const CurrentLocation: React.FC<CurrentLocationProps> = ({
 	};
 
 	const favoriteIconOnClick = () => {
-		addLocationToFavorites(currentLocation);
+		addLocationToFavorites(activeLocation);
 		setIsFavorited(!isFavorited);
 	};
 
 	return (
-		<div style={styles.currentLocationWrapper}>
-			<h2 style={styles.cityTitle}>{locationNameParser(currentLocation)}</h2>
+		<div style={styles.activeLocationWrapper}>
+			<h2 style={styles.cityTitle}>{locationNameParser(activeLocation)}</h2>
 			
 			<a
 				style={styles.favoriteIconButton}
@@ -62,4 +62,4 @@ const CurrentLocation: React.FC<CurrentLocationProps> = ({
 	);
 };
 
-export default CurrentLocation;
+export default ActiveLocation;

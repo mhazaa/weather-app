@@ -7,14 +7,14 @@ import { Location } from '../types';
 import favoritesCloud from '../assets/favorites-cloud.svg';
 
 interface FavoriteLocationsProps {
-	usersLocation: Location;
-	setCurrentLocation: (location: Location) => void;
+	currentLocation: Location;
+	setActiveLocation: (location: Location) => void;
 	favoriteLocations: Location[];
 };
 
 const FavoriteLocations: React.FC<FavoriteLocationsProps> = ({
-	usersLocation,
-	setCurrentLocation,
+	currentLocation,
+	setActiveLocation,
 	favoriteLocations,
 }) => {
 	const { isMobile } = useResponsive();
@@ -30,7 +30,7 @@ const FavoriteLocations: React.FC<FavoriteLocationsProps> = ({
 			bottom: '0',
 			color: theme.colors.blue,
 		},
-		usersLocation: {
+		currentLocation: {
 			height: '40px',
 			display: 'flex',
 			justifyContent: 'center',
@@ -38,9 +38,7 @@ const FavoriteLocations: React.FC<FavoriteLocationsProps> = ({
 		},
 	};
 
-	const favoriteLocationOnClick = (location: Location) => {
-		setCurrentLocation(location);
-	};
+	const favoriteLocationOnClick = (location: Location) => setActiveLocation(location);
 	
 	return (
 		<div>
@@ -52,8 +50,12 @@ const FavoriteLocations: React.FC<FavoriteLocationsProps> = ({
 			{isMobile && <Separator />}
 
 			<div>
-				<a style={styles.usersLocation} onClick={() => favoriteLocationOnClick(usersLocation)} tabIndex={0}>
-					<h4>{locationNameParser(usersLocation)} (Current Location)</h4>
+				<a
+					style={styles.currentLocation}
+					onClick={() => favoriteLocationOnClick(currentLocation)}
+					tabIndex={0}
+				>
+					<h4>{locationNameParser(currentLocation)} (Current Location)</h4>
 				</a>
 
 				<div>

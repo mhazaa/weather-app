@@ -10,11 +10,11 @@ import locationCloud from '../assets/location-cloud.svg';
 let timeout: any = null;
 
 interface LocationSelectorProps {
-	setCurrentLocation: (location: Location) => void;
+	setActiveLocation: (location: Location) => void;
 };
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({
-	setCurrentLocation,
+	setActiveLocation,
 }) => {
 	const [inputValue, setInputValue] = useState('');
 	const [locationsDropdown, setLocationsDropdown] = useState<Location[]>([]);
@@ -69,7 +69,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 	};
 
 	const dropdownItemOnClick = (location: Location) => {
-		setCurrentLocation(location);
+		setActiveLocation(location);
 		setInputValue('');
 		setLocationsDropdown([]);
 	};
