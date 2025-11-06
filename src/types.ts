@@ -24,8 +24,8 @@ export interface SVGOptions {
 	strokeWidth: number;
 };
 
-export interface Place {
-	displayName: string;
+export interface Location {
+	displayName?: string;
 	county?: string;
 	town?: string;
 	city?: string;

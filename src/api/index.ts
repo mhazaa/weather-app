@@ -1,4 +1,4 @@
-import { Coords, WeeklyForecastData, HourlyForecastData, Place } from '../types';
+import { Coords, WeeklyForecastData, HourlyForecastData, Location } from '../types';
 
 export const getCoords = (): Promise<Coords> => {
 	return new Promise((resolve, reject) => {
@@ -102,7 +102,7 @@ export const getHourlyForecast = async (forecastHourlyURL: string) => {
 	};
 };
 
-export const getLocationList = async (location: string): Promise<Place[]> => {
+export const getLocationList = async (location: string): Promise<Location[]> => {
 	const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=us&q=${encodeURIComponent(location)}`);
 	const data = await res.json();
 
