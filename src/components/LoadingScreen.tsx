@@ -11,7 +11,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 			[key: string]: CSSProperties;
 	} = {
 		loadingScreen: {
-			position: 'absolute',
+			position: 'fixed',
 			top: '0',
 			left: '0',
 			zIndex: '10',
