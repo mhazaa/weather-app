@@ -25,10 +25,11 @@ https://mhazaa.github.io/weather-app
 - **_npm run start_**: Builds project then runs it in a localserver on port 3000
 
 
-## Main Component Structure
+## Component Structure
 
 Each component has a Props Interface in the same file, as well a styling object within the component, minus some global styles in the ./styles folder. Future component should follow the same pattern. Here's a list of the components:
 
+#### MAIN COMPONENTS:
 - **Logo:** Minimal logo component
 - **ActiveLocation:** Topmost part of the app; component that displays city/town/county, state, alongside a button to add current/active city to favorites
 - **ForecaseOverview** This is probably the most involved component, contains current temprature data, as well as hourly and weekly forecast. If I had more time or in a later version I might break this into mini components, refactor it a bit more, or add a different form of visualization as well.
