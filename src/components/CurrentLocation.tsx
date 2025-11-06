@@ -6,15 +6,14 @@ import FavoriteIcon from '../SVGComponents/FavoriteIcon';
 
 interface CurrentLocationProps {
 	currentLocation: Location;
-	isFavorited: boolean;
-	setFavoriteLocations: (favoriteLocations: Location[]) => void;
+	addLocationToFavorites: (location: Location) => void;
 };
 
 const CurrentLocation: React.FC<CurrentLocationProps> = ({
 	currentLocation,
-	isFavorited,
-	setFavoriteLocations,
+	addLocationToFavorites,
 }) => {
+	const [isFavorited, setIsFavorited] = useState<boolean>(false);
 	const [favoriteIconHovered, setFavoriteIconHovered] = useState<boolean>(false);
 	const { isMobile } = useResponsive();
 
@@ -38,13 +37,8 @@ const CurrentLocation: React.FC<CurrentLocationProps> = ({
 	};
 
 	const favoriteIconOnClick = () => {
-		console.log(isFavorited);
-		//setFavoriteLocations((prev) => [...prev, currentLocation]);
-		//if (!currentLocation) return;
-
-		/*return (!favoriteLocations.includes(city))
-			? setFavoriteLocations([...favoriteLocations, city])
-			: setFavoriteLocations(favoriteLocations.filter(_location => _location !== location));*/
+		addLocationToFavorites(currentLocation);
+		setIsFavorited(!isFavorited);
 	};
 
 	return (
@@ -56,9 +50,10 @@ const CurrentLocation: React.FC<CurrentLocationProps> = ({
 				onMouseEnter={() => setFavoriteIconHovered(true)}
 				onMouseLeave={() => setFavoriteIconHovered(false)}
 				onClick={favoriteIconOnClick}
+				tabIndex={0}
 			>
 				<FavoriteIcon
-					fill={favoriteIconHovered ? 'white' : 'none'}
+					fill={isFavorited ? 'white' : favoriteIconHovered ? 'rgba(255,255,255,0.5)' :  'none'}
 					stroke='white'
 					strokeWidth={5}
 				/>
