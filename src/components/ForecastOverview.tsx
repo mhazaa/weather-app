@@ -1,21 +1,24 @@
-import React, { CSSProperties } from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import useResponsive from '../hooks/useResponsive';
 import Separator from './Separator';
 import theme from '../styles/theme';
-import { Temperature, WeeklyForecastData, HourlyForecastData } from '../types';
+import { getLocationData, getWeeklyForecast, getHourlyForecast } from '../api';
+import { Temperature, WeeklyForecastData, HourlyForecastData, Location } from '../types';
 import tempratureCloud from '../assets/temprature-cloud.svg';
 
 interface ForecastOverviewProps {
-	currentTemprature: Temperature;
-	weeklyForecast: WeeklyForecastData[];
-	hourlyForecast: HourlyForecastData[];
+	activeLocation: Location;
+	setLoadingMessage: (message: string | null) => void;
 };
 
 const ForecastOverview: React.FC<ForecastOverviewProps> = ({
-	currentTemprature,
-	weeklyForecast,
-	hourlyForecast,
+	activeLocation,
+	setLoadingMessage,
 }) => {
+	const [currentTemprature, setCurrentTemprature] = useState<Temperature>({degree: 0, unit: 'F'});
+	const [weeklyForecast, setWeeklyForecast] = useState<WeeklyForecastData[]>([]);
+	const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>([]);
+
 	const { isMobile } = useResponsive();
 
 	const styles: {
@@ -83,6 +86,25 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 			paddingRight: '7px'
 		},
 	};
+
+	useEffect(() => {
+		(async () => {
+			try {
+				setLoadingMessage('Loading location data...');
+				const { forecastURL, forecastHourlyURL } = await getLocationData(activeLocation.latitude, activeLocation.longitude);
+				setLoadingMessage('Loading weekly forecast...');
+				const weeklyForecast = await getWeeklyForecast(forecastURL);
+				setWeeklyForecast(weeklyForecast);
+				setLoadingMessage('Loading hourly forecast...');
+				const { currentTemperature, hourlyForecast } = await getHourlyForecast(forecastHourlyURL);
+				setCurrentTemprature(currentTemperature);
+				setHourlyForecast(hourlyForecast);
+				setLoadingMessage(null);
+			} catch (e) {
+				console.error(e);
+			};
+		})();
+	}, [activeLocation]);
 
 	return (
 		<div style={styles.tempratureDataWrapper}>
