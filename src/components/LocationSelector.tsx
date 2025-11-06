@@ -10,12 +10,13 @@ import locationCloud from '../assets/location-cloud.svg';
 let timeout: any = null;
 
 interface LocationSelectorProps {
-	setCoords: (coords: Coords) => void;
+	setCurrentLocation: (location: Location) => void;
 };
 
 const LocationSelector: React.FC<LocationSelectorProps> = ({
-	setCoords,
+	setCurrentLocation,
 }) => {
+	const [inputValue, setInputValue] = useState('');
 	const [locationsDropdown, setLocationsDropdown] = useState<Location[]>([]);
 	const { isMobile } = useResponsive();
 
@@ -50,6 +51,8 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 	};
 
 	const onInputChange = (input: string) => {
+		setInputValue(input);
+
 		if (timeout) clearTimeout(timeout);
 		if (input.length === 0) return setLocationsDropdown([]);
 
@@ -58,7 +61,6 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 				try {
 					const locationList = await getLocationList(input);
 					setLocationsDropdown(locationList);
-					console.log(locationList);
 				} catch (e) {
 					console.error(e);
 				};
@@ -66,8 +68,10 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 		}, 1000);
 	};
 
-	const dropdownItemOnClick = (latitude: number, longitude: number) => {
-		setCoords({ latitude, longitude });
+	const dropdownItemOnClick = (location: Location) => {
+		setCurrentLocation(location);
+		setInputValue('');
+		setLocationsDropdown([]);
 	};
 
 	return (
@@ -82,6 +86,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 			<div>
 				<input
 					style={styles.cityInput}
+					value={inputValue}
 					onChange={(e) => onInputChange(e.target.value)}
 				/>
 			</div>
@@ -91,8 +96,9 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 					<a
 						key={i}
 						onClick={
-							() => dropdownItemOnClick(location.latitude, location.longitude)
+							() => dropdownItemOnClick(location)
 						}
+						tabIndex={0}
 					>
 						<h4>{locationNameParser(location)}</h4>
 					</a>
