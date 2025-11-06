@@ -90,7 +90,7 @@ export const getHourlyForecast = async (forecastHourlyURL: string) => {
 	const today = new Date().toISOString().split('T')[0];
 	const hourlyForecast: HourlyForecastData[] = _hourlyForecast
 		.filter((f) => f.startTime.startsWith(today))
-		.map(({ startTime, ...rest }) => rest);
+		.map(({ _startTime, ...rest }) => rest);
 
 	const currentTemperature = {
 		degree: forecastHourlyPeriods[0].temperature,
