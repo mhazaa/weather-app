@@ -1,51 +1,56 @@
 import React, { useState, CSSProperties } from 'react';
+import useResponsive from '../hooks/useResponsive';
+import locationNameParser from '../functions/locationNameParser';
+import { Location } from '../types';
 import FavoriteIcon from '../SVGComponents/FavoriteIcon';
 
 interface CurrentLocationProps {
-	city: string;
-	state: string;
-	favoriteLocations: string[];
-	setFavoriteLocations: (favoriteLocations: string[]) => void;
+	currentLocation: Location;
+	isFavorited: boolean;
+	setFavoriteLocations: (favoriteLocations: Location[]) => void;
 };
 
 const CurrentLocation: React.FC<CurrentLocationProps> = ({
-	city,
-	state,
-	favoriteLocations,
+	currentLocation,
+	isFavorited,
 	setFavoriteLocations,
 }) => {
 	const [favoriteIconHovered, setFavoriteIconHovered] = useState<boolean>(false);
+	const { isMobile } = useResponsive();
 
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
 		currentLocationWrapper: {
 			display: 'flex',
+			flexDirection: isMobile ? 'column-reverse' : 'row',
 			justifyContent: 'center',
 			alignItems: 'center',
-			marginBottom: '10px',
+			marginBottom: '20px',
 		},
 		cityTitle: {
 		},
 		favoriteIconButton: {
 			width: '65px',
 			height: 'auto',
-			paddingLeft: '20px',
-			paddingTop: '10px',
+			padding: isMobile ? '0 0 8px 0' : '10px 0 0 20px',
 		},
 	};
 
 	const favoriteIconOnClick = () => {
-		if (city.length === 0) return;
+		console.log(isFavorited);
+		//setFavoriteLocations((prev) => [...prev, currentLocation]);
+		//if (!currentLocation) return;
 
-		return (!favoriteLocations.includes(city))
+		/*return (!favoriteLocations.includes(city))
 			? setFavoriteLocations([...favoriteLocations, city])
-			: setFavoriteLocations(favoriteLocations.filter(_location => _location !== location));
+			: setFavoriteLocations(favoriteLocations.filter(_location => _location !== location));*/
 	};
 
 	return (
 		<div style={styles.currentLocationWrapper}>
-			<h2 style={styles.cityTitle}>{city}, {state}</h2>
+			<h2 style={styles.cityTitle}>{locationNameParser(currentLocation)}</h2>
+			
 			<a
 				style={styles.favoriteIconButton}
 				onMouseEnter={() => setFavoriteIconHovered(true)}

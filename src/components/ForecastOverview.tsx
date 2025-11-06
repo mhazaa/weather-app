@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import useResponsive from '../hooks/useResponsive';
 import Separator from './Separator';
 import theme from '../styles/theme';
 import { Temperature, WeeklyForecastData, HourlyForecastData } from '../types';
@@ -15,6 +16,8 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 	weeklyForecast,
 	hourlyForecast,
 }) => {
+	const { isMobile } = useResponsive();
+
 	const styles: {
 		[key: string]: CSSProperties;
 	} = {
@@ -22,7 +25,7 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 			marginBottom: '40px',
 		},
 		tempratureCloud: {
-			width: '315px',
+			width: '300px',
 		},
 		tempratureTitle: {
 			position: 'absolute',
@@ -31,11 +34,12 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 		},
 		forecastsWrapper: {
 			display: 'flex',
+			flexDirection: isMobile ? 'column' : 'row',
 			justifyContent: 'center',
 		},
 		hourlyForecastWrapper: {
 			position: 'relative',
-			marginRight: '80px',
+			marginRight: isMobile ? 0 : '80px',
 		},
 		forecastScroll: {
 			maxHeight: '300px',
@@ -45,10 +49,14 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 		},
 		hour: {
 			display: 'flex',
+			width: isMobile ? '100%' : 'unset',
+			maxWidth: isMobile ? '150px' : 'unset',
+			margin: 'auto',
 			justifyContent: 'space-between',
 		},
 		hourText: {
 			color: theme.colors.darkBlue,
+			paddingRight: isMobile ? '7px' : '0',
 		},
 		forecastBottomGradient: {
 			background: `linear-gradient(0deg, ${theme.colors.blue}, transparent)`,
@@ -65,7 +73,10 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 		},
 		day: {
 			display: 'flex',
-			justifyContent: 'end',
+			width: isMobile ? '100%' : 'unset',
+			maxWidth: isMobile ? '150px' : 'unset',
+			margin: 'auto',
+			justifyContent: isMobile ? 'space-between' : 'end',
 		},
 		dayText: {
 			color: theme.colors.darkBlue,
@@ -77,7 +88,12 @@ const ForecastOverview: React.FC<ForecastOverviewProps> = ({
 		<div style={styles.tempratureDataWrapper}>
 			<div className='cloud-wrapper'>
 				<img style={styles.tempratureCloud} src={tempratureCloud} alt='temprature-cloud' />
-				<h2 style={styles.tempratureTitle}>{currentTemprature.degree} {currentTemprature.unit}°</h2>
+				<h2
+					className='temprature-title-font'
+					style={styles.tempratureTitle}
+				>
+					{currentTemprature.degree} {currentTemprature.unit}°
+				</h2>
 			</div>
 			
 			<Separator />

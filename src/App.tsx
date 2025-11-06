@@ -1,22 +1,26 @@
 import React, { useState, useEffect, CSSProperties } from 'react';
+import useResponsive from './hooks/useResponsive';
 import Logo from './components/Logo';
 import CurrentLocation from './components/CurrentLocation';
 import LocationSelector from './components/LocationSelector';
 import ForecastOverview from './components/ForecastOverview';
 import FavoriteLocations from './components/FavoriteLocations';
+import Separator from './components/Separator';
+import LoadingScreen from './components/LoadingScreen';
 import { getCoords, getLocationData, getWeeklyForecast, getHourlyForecast } from './api';
-import { Coords, Temperature, WeeklyForecastData, HourlyForecastData } from './types';
+import { Coords, Temperature, WeeklyForecastData, HourlyForecastData, Location } from './types';
 import './styles/styleSheet.scss';
 
 const App: React.FC = () => {
 	const [coords, setCoords] = useState<Coords | null>(null);
-	const [city, setCity] = useState<string>(''); 
-	const [state, setState] = useState<string>('');
+	const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
 	const [currentTemprature, setCurrentTemprature] = useState<Temperature>({degree: 0, unit: 'F'});
 	const [weeklyForecast, setWeeklyForecast] = useState<WeeklyForecastData[]>([]);
 	const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>([]);
-	const [favoriteLocations, setFavoriteLocations] = useState<string[]>(['']);
+	const [favoriteLocations, setFavoriteLocations] = useState<Location[]>([]);
 	const [loadingMessage, setLoadingMessage] = useState<string | null>('Loading...');
+
+	const { isMobile } = useResponsive();
 
 	useEffect(() => {
 		(async () => {
@@ -31,11 +35,17 @@ const App: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
+		if (!coords) return;
+
 		(async () => {
-			setLoadingMessage('Loading location data...');
+			setLoadingMessage('Loading current location data...');
 			const { city, state, forecastURL, forecastHourlyURL } = await getLocationData(coords.latitude, coords.longitude);
-			setCity(city);
-			setState(state);
+			setCurrentLocation({
+				city,
+				state,
+				latitude: coords.latitude,
+				longitude: coords.longitude,
+			});
 			setLoadingMessage('Loading weekly forecast...');
 			const weeklyForecast = await getWeeklyForecast(forecastURL);
 			setWeeklyForecast(weeklyForecast);
@@ -50,12 +60,6 @@ const App: React.FC = () => {
 	const styles: {
 			[key: string]: CSSProperties;
 	} = {
-		loadingScreen: {
-			display: 'flex',
-			height: '100vh',
-			justifyContent: 'center',
-			alignItems: 'center',
-		},
 		wrapper: {
 			width: '95%',
 			maxWidth: '900px',
@@ -63,28 +67,32 @@ const App: React.FC = () => {
 			textAlign: 'center',
 		},
 		sectionsWrapper: {
+			position: 'relative',
 			display: 'flex',
+			flexDirection: isMobile ? 'column-reverse' : 'row',
 			justifyContent: 'center',
+		},
+		seperatorWrapper: {
+			position: 'absolute',
+			width: '100%',
+			top: '50px',
+			left: '0',
 		},
 	};
 
-	if (loadingMessage || !coords) return (
-		<div style={styles.loadingScreen}>
-			<h4>{loadingMessage}</h4>
-		</div>
-	);
-
 	return (
 		<div>
+			{loadingMessage &&
+				<LoadingScreen loadingMessage={loadingMessage} />
+			}
 			<div style={styles.wrapper}>
 				<Logo />
 
-				<CurrentLocation
-					city={city}
-					state={state}
-					favoriteLocations={favoriteLocations}
+				{currentLocation && <CurrentLocation
+					currentLocation={currentLocation}
+					isFavorited={favoriteLocations.includes(currentLocation)}
 					setFavoriteLocations={setFavoriteLocations}
-				/>
+				/>}
 
 				<ForecastOverview
 					currentTemprature={currentTemprature}
@@ -92,10 +100,20 @@ const App: React.FC = () => {
 					hourlyForecast={hourlyForecast}
 				/>
 
-				<div style={styles.sectionsWrapper}>
-					<LocationSelector setCoords={setCoords} />
-					<FavoriteLocations city={city} favoriteLocations={favoriteLocations} />
-				</div>
+				{currentLocation &&
+					<div style={styles.sectionsWrapper}>
+						<LocationSelector setCoords={setCoords} />
+						<FavoriteLocations
+							currentLocation={currentLocation}
+							favoriteLocations={favoriteLocations}
+						/>
+						{!isMobile &&
+							<div style={styles.seperatorWrapper}>
+								<Separator />
+							</div>
+						}
+					</div>
+				}
 			</div>
 		</div>
 	);
