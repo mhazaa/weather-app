@@ -15,6 +15,7 @@ const App: React.FC = () => {
 	const [activeLocation, setActiveLocation] = useState<Location | null>(null);
 	const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
 	const [favoriteLocations, setFavoriteLocations] = useState<Location[]>([]);
+	const [isActiveLocationFavorited, setIsActiveLocationFavorited] = useState<boolean>(false);
 	const [loadingMessage, setLoadingMessage] = useState<string | null>('Loading...');
 
 	const { isMobile } = useResponsive();
@@ -58,8 +59,14 @@ const App: React.FC = () => {
 		})();
 	}, []);
 
-	const addLocationToFavorites = (location: Location) => {
+	useEffect(() => {
+		if (!activeLocation) return;
+		setIsActiveLocationFavorited(favoriteLocations.includes(activeLocation));
+	}, [activeLocation]);
+
+	const toggleLocationFavorite = (location: Location) => {
 		const alreadyFavorited = favoriteLocations.includes(location);
+
 		if (alreadyFavorited) {
 			setFavoriteLocations(prevItems => prevItems.filter(item =>
 				item.latitude !== location.latitude || item.longitude !== location.longitude
@@ -67,6 +74,8 @@ const App: React.FC = () => {
 		} else {
 			setFavoriteLocations(prevItems => [...prevItems, location]);
 		};
+		
+		setIsActiveLocationFavorited(!isActiveLocationFavorited);
 	};
 
 	return (
@@ -79,7 +88,8 @@ const App: React.FC = () => {
 
 				{activeLocation && <ActiveLocation
 					activeLocation={activeLocation}
-					addLocationToFavorites={addLocationToFavorites}
+					isActiveLocationFavorited={isActiveLocationFavorited}
+					toggleLocationFavorite={toggleLocationFavorite}
 				/>}
 
 				{activeLocation && <ForecastOverview

@@ -1,19 +1,21 @@
 import React, { useState, CSSProperties } from 'react';
 import useResponsive from '../hooks/useResponsive';
 import locationNameParser from '../functions/locationNameParser';
+import theme from '../styles/theme';
 import { Location } from '../types';
 import FavoriteIcon from '../SVGComponents/FavoriteIcon';
 
 interface ActiveLocationProps {
 	activeLocation: Location;
-	addLocationToFavorites: (location: Location) => void;
+	isActiveLocationFavorited: boolean;
+	toggleLocationFavorite: (location: Location) => void;
 };
 
 const ActiveLocation: React.FC<ActiveLocationProps> = ({
 	activeLocation,
-	addLocationToFavorites,
+	isActiveLocationFavorited,
+	toggleLocationFavorite,
 }) => {
-	const [isFavorited, setIsFavorited] = useState<boolean>(false);
 	const [favoriteIconHovered, setFavoriteIconHovered] = useState<boolean>(false);
 	const { isMobile } = useResponsive();
 
@@ -36,10 +38,7 @@ const ActiveLocation: React.FC<ActiveLocationProps> = ({
 		},
 	};
 
-	const favoriteIconOnClick = () => {
-		addLocationToFavorites(activeLocation);
-		setIsFavorited(!isFavorited);
-	};
+	const favoriteIconOnClick = () => toggleLocationFavorite(activeLocation);
 
 	return (
 		<div style={styles.activeLocationWrapper}>
@@ -53,8 +52,8 @@ const ActiveLocation: React.FC<ActiveLocationProps> = ({
 				tabIndex={0}
 			>
 				<FavoriteIcon
-					fill={isFavorited ? 'white' : favoriteIconHovered ? 'rgba(255,255,255,0.5)' :  'none'}
-					stroke='white'
+					fill={isActiveLocationFavorited ? theme.colors.white : favoriteIconHovered ? 'rgba(255,255,255,0.5)' :  'none'}
+					stroke={theme.colors.white}
 					strokeWidth={5}
 				/>
 			</a>
