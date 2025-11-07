@@ -108,13 +108,28 @@ export const getLocationList = async (location: string): Promise<Location[]> => 
 
 	if (data.length === 0) return [];
 
-	return data.map((place: any) => ({
-		displayName: place.display_name,
-		county: place.address.county || null,
-		town: place.address.town || null,
-		city: place.address.city || null,
-		state: place.address.state,
-		latitude: parseFloat(place.lat),
-		longitude: parseFloat(place.lon),
-	}));
+	const filteredData = data.filter((p: any) =>
+		['city', 'town', 'village', 'hamlet', 'county', 'state', 'administrative'].includes(p.type)
+	);
+
+	return filteredData.map((place: any) => {
+		const city =
+			place.address.city ||
+			place.address.town ||
+			place.address.village ||
+			place.address.municipality ||
+			place.address.hamlet ||
+			place.address.county ||
+			null;
+		const state = place.address.state;
+		const latitude = parseFloat(place.lat);
+		const longitude = parseFloat(place.lon);
+
+		return {
+			city,
+			state,
+			latitude,
+			longitude,
+		};
+	});
 };

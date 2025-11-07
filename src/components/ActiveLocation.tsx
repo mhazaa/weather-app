@@ -42,7 +42,7 @@ const ActiveLocation: React.FC<ActiveLocationProps> = ({
 
 	return (
 		<div style={styles.activeLocationWrapper}>
-			<h2 style={styles.cityTitle}>{locationNameParser(activeLocation)}</h2>
+			<h2 style={styles.cityTitle}>{locationNameParser(activeLocation, false)}</h2>
 			
 			<a
 				style={styles.favoriteIconButton}

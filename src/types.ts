@@ -25,11 +25,8 @@ export interface SVGOptions {
 };
 
 export interface Location {
-	displayName?: string;
-	county?: string;
-	town?: string;
-	city?: string;
-	state: string
+	city: string | null;
+	state: string;
 	latitude: number;
 	longitude: number;
 };
