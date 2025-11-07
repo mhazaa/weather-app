@@ -18,6 +18,7 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 }) => {
 	const [inputValue, setInputValue] = useState('');
 	const [locationsDropdown, setLocationsDropdown] = useState<Location[]>([]);
+	const [noResultsFound, setNoResultsFound] = useState<boolean>(false);
 	const { isMobile } = useResponsive();
 
 	const styles: {
@@ -52,7 +53,8 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 
 	const onInputChange = (input: string) => {
 		setInputValue(input);
-
+		setNoResultsFound(false);
+		
 		if (timeout) clearTimeout(timeout);
 		if (input.length === 0) return setLocationsDropdown([]);
 
@@ -60,12 +62,21 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 			(async () => {
 				try {
 					const locationList = await getLocationList(input);
+					if (locationList.length === 0) setNoResultsFound(true);
 					setLocationsDropdown(locationList);
 				} catch (e) {
 					console.error(e);
 				};
 			})();
-		}, 1000);
+		}, 500);
+	};
+
+	const onInputSubmit = async () => {
+		clearTimeout(timeout);
+		setNoResultsFound(false);
+		const locationList = await getLocationList(inputValue);
+		if (locationList.length === 0) setNoResultsFound(true);
+		setLocationsDropdown(locationList);
 	};
 
 	const dropdownItemOnClick = (location: Location) => {
@@ -88,10 +99,14 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({
 					style={styles.cityInput}
 					value={inputValue}
 					onChange={(e) => onInputChange(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') onInputSubmit();
+					}}
 				/>
 			</div>
 
 			<div style={styles.dropdown}>
+				{noResultsFound && <h4>No results found</h4>}
 				{locationsDropdown.map((location: Location, i: number) => (
 					<a
 						key={i}

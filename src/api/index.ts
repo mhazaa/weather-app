@@ -106,7 +106,7 @@ export const getLocationList = async (location: string): Promise<Location[]> => 
 	const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=us&q=${encodeURIComponent(location)}`);
 	const data = await res.json();
 
-	if (data.length === 0) throw new Error('No results found');
+	if (data.length === 0) return [];
 
 	return data.map((place: any) => ({
 		displayName: place.display_name,
