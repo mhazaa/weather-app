@@ -109,7 +109,8 @@ export const getLocationList = async (location: string): Promise<Location[]> => 
 	if (data.length === 0) return [];
 
 	const filteredData = data.filter((p: any) =>
-		['city', 'town', 'village', 'hamlet', 'county', 'state', 'administrative'].includes(p.type)
+		['city', 'town', 'village', 'hamlet', 'county', 'state', 'administrative'].includes(p.type) &&
+		p.address.state
 	);
 
 	return filteredData.map((place: any) => {
